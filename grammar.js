@@ -44,7 +44,7 @@ module.exports = grammar({
 
       bracketed_command: $ => seq('\[', $.command, repeat(seq(choice (';', '\n'), $.command)), optional('\n'), '\]'),
 
-      _body_commands: $ => choice (
+      _braced_commands: $ => choice (
           $._word_no_braced_identifier,
           seq('{', '}'),
           seq('{', $.command, repeat(seq(choice (';', '\n'), $.command)), optional('\n'), '}'),
@@ -141,18 +141,18 @@ module.exports = grammar({
 
       // for command
       for_command: $ => seq('for', $.for_start, $.for_test, $.for_next, $.for_body),
-      for_start: $ => $._body_commands,
+      for_start: $ => $._braced_commands,
       for_test: $ => $._braced_expression,
-      for_next: $ => $._body_commands,
-      for_body: $ => $._body_commands,
+      for_next: $ => $._braced_commands,
+      for_body: $ => $._braced_commands,
 
       // if command
       if_command: $ => seq('if', $.if_expression, optional('then'), $.if_body, repeat(seq('elseif', $.elseif_expression, optional('then'), $.elseif_body)), optional(seq('else', $.else_body))),
       if_expression: $ => $._braced_expression,
+      if_body: $ => $._braced_commands,
       elseif_expression: $ => $._braced_expression,
-      if_body: $ => $._body_commands,
-      elseif_body: $ => $._body_commands,
-      else_body: $ => $._body_commands,
+      elseif_body: $ => $._braced_commands,
+      else_body: $ => $._braced_commands,
 
       // proc command
       proc_command: $ => seq('proc', $.proc_name, $.proc_arguments, $.proc_body),
@@ -161,12 +161,12 @@ module.exports = grammar({
           $._word_no_braced_identifier,
           seq('{', repeat($._word), '}'),
       ),
-      proc_body: $ => $._body_commands,
+      proc_body: $ => $._braced_commands,
 
       // while command
       while_command: $ => seq('while', $.while_test, $.while_body),
       while_test: $ => $._braced_expression,
-      while_body: $ => $._body_commands,
+      while_body: $ => $._braced_commands,
 
       // words
       _word_no_braced_identifier: $ => choice (
