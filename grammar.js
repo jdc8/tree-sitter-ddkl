@@ -128,6 +128,12 @@ module.exports = grammar({
           seq('{', $._sub_expression, '}'),
       ),
 
+      _braced_expression: $=> choice (
+          $._word_no_braced_identifier,
+          seq('{', '}'),
+          seq('{', $.expression, '}'),
+      ),
+
       // specific Tcl command where we know how to parse the arguments
 
       // expr command
@@ -136,26 +142,14 @@ module.exports = grammar({
       // for command
       for_command: $ => seq('for', $.for_start, $.for_test, $.for_next, $.for_body),
       for_start: $ => $._body_commands,
-      for_test: $ => choice (
-          $._word_no_braced_identifier,
-          seq('{', '}'),
-          seq('{', $.expression, '}'),
-      ),
+      for_test: $ => $._braced_expression,
       for_next: $ => $._body_commands,
       for_body: $ => $._body_commands,
 
       // if command
       if_command: $ => seq('if', $.if_expression, optional('then'), $.if_body, repeat(seq('elseif', $.elseif_expression, optional('then'), $.elseif_body)), optional(seq('else', $.else_body))),
-      if_expression: $ => choice (
-          $._word_no_braced_identifier,
-          seq('{', '}'),
-          seq('{', $.expression, '}'),
-      ),
-      elseif_expression: $ => choice (
-          $._word_no_braced_identifier,
-          seq('{', '}'),
-          seq('{', $.expression, '}'),
-      ),
+      if_expression: $ => $._braced_expression,
+      elseif_expression: $ => $._braced_expression,
       if_body: $ => $._body_commands,
       elseif_body: $ => $._body_commands,
       else_body: $ => $._body_commands,
@@ -171,11 +165,7 @@ module.exports = grammar({
 
       // while command
       while_command: $ => seq('while', $.while_test, $.while_body),
-      while_test: $ => choice (
-          $._word_no_braced_identifier,
-          seq('{', '}'),
-          seq('{', $.expression, '}'),
-      ),
+      while_test: $ => $._braced_expression,
       while_body: $ => $._body_commands,
 
       // words
