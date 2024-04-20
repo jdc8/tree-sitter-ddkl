@@ -35,6 +35,7 @@ module.exports = grammar({
           seq($.command_name, optional($.command_arguments)),
           $.expr_command,
           $.for_command,
+          $.if_command,
           $.proc_command,
           $.while_command,
       ),
@@ -142,6 +143,22 @@ module.exports = grammar({
       ),
       for_next: $ => $._body_commands,
       for_body: $ => $._body_commands,
+
+      // if command
+      if_command: $ => seq('if', $.if_expression, optional('then'), $.if_body, repeat(seq('elseif', $.elseif_expression, optional('then'), $.elseif_body)), optional(seq('else', $.else_body))),
+      if_expression: $ => choice (
+          $._word_no_braced_identifier,
+          seq('{', '}'),
+          seq('{', $.expression, '}'),
+      ),
+      elseif_expression: $ => choice (
+          $._word_no_braced_identifier,
+          seq('{', '}'),
+          seq('{', $.expression, '}'),
+      ),
+      if_body: $ => $._body_commands,
+      elseif_body: $ => $._body_commands,
+      else_body: $ => $._body_commands,
 
       // proc command
       proc_command: $ => seq('proc', $.proc_name, $.proc_arguments, $.proc_body),
