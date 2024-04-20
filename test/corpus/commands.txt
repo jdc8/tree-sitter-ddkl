@@ -1,0 +1,56 @@
+
+================================================================================
+Command
+================================================================================
+
+a b c
+
+--------------------------------------------------------------------------------
+
+    (source_file
+      (command
+        (command_name
+          (identifier))
+        (command_arguments
+          (identifier)
+          (identifier))))
+
+================================================================================
+Command with scalar variables
+================================================================================
+
+a $b $c
+
+--------------------------------------------------------------------------------
+
+    (source_file
+      (command
+        (command_name
+          (identifier))
+        (command_arguments
+          (scalar_dereference
+            (identifier))
+          (scalar_dereference
+            (identifier)))))
+
+
+================================================================================
+Command with array variables
+================================================================================
+
+a $b(c) $d($e)
+
+--------------------------------------------------------------------------------
+
+    (source_file
+      (command
+        (command_name
+          (identifier))
+        (command_arguments
+          (array_dereference
+            (identifier)
+            (identifier))
+          (array_dereference
+            (identifier)
+            (scalar_dereference
+              (identifier))))))
