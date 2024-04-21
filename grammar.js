@@ -20,7 +20,10 @@ const PRECEDENCES = {
 }
 
 module.exports = grammar({
+
   name: 'ddkl',
+
+  conflicts: $ => [[$.command_name, $.foreach_varlist]],
 
   rules: {
 
@@ -36,6 +39,7 @@ module.exports = grammar({
           seq($.command_name, optional($.command_arguments)),
           $.expr_command,
           $.for_command,
+          $.foreach_command,
           $.if_command,
           $.proc_command,
           $.while_command,
@@ -143,6 +147,20 @@ module.exports = grammar({
       for_test: $ => $._braced_expression,
       for_next: $ => $._braced_commands,
       for_body: $ => $._braced_commands,
+
+      // foreach command
+      foreach_command: $ => seq('foreach', repeat1(seq($.foreach_varlist, $.foreach_list)), $.foreach_body),
+      foreach_varlist: $ => choice (
+          $._word_no_braced_identifier,
+          seq('{', repeat($._word), '}'),
+      ),
+      foreach_list: $ => choice (
+          $._word_no_braced_identifier,
+          seq('{', repeat($._word), '}'),
+      ),
+      foreach_body: $ => choice (
+          $._braced_commands,
+      ),
 
       // if command
       if_command: $ => seq('if', $.if_expression, optional('then'), $.if_body, repeat(seq('elseif', $.elseif_expression, optional('then'), $.elseif_body)), optional(seq('else', $.else_body))),
