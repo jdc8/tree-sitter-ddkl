@@ -1,4 +1,5 @@
-// Tcl parser base on Tcl Dodecalogue with ideas from https://github.com/tree-sitter-grammars/tree-sitter-tcl
+// Tcl parser based on Tcl Dodecalogue at https://www.tcl.tk/man/tcl8.6/TclCmd/Tcl.htm
+// with ideas from https://github.com/tree-sitter-grammars/tree-sitter-tcl
 
 const PRECEDENCES = {
     unary        : 150,
@@ -46,8 +47,7 @@ module.exports = grammar({
 
       _braced_commands: $ => choice (
           $._word_no_braced_identifier,
-          seq('{', '}'),
-          seq('{', $.command, repeat(seq(choice (';', '\n'), $.command)), optional('\n'), '}'),
+          seq('{', optional(seq($.command, repeat(seq(choice (';', '\n'), $.command)), optional('\n'))), '}'),
       ),
 
       // expressions
@@ -124,14 +124,12 @@ module.exports = grammar({
 
       expression: $ => choice (
           $._sub_expression,
-          seq('{', '}'),
-          seq('{', $._sub_expression, '}'),
+          seq('{', optional($._sub_expression), '}'),
       ),
 
       _braced_expression: $=> choice (
           $._word_no_braced_identifier,
-          seq('{', '}'),
-          seq('{', $.expression, '}'),
+          seq('{', optional($.expression), '}'),
       ),
 
       // specific Tcl command where we know how to parse the arguments
