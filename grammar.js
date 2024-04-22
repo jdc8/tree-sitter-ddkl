@@ -16,9 +16,16 @@ module.exports = grammar({
         command_argument: $=> $.word,
 
         word: $ => choice(
+            $.array_reference_scalar_reference,
+            $.array_reference_scalar,
+            $.scalar_reference,
             $.identifier,
         ),
 
-        identifier: $ => /[^\s\;\n]+/,
+        name: $ => /[a-zA-Z0-9_:]+/,
+        scalar_reference: $ => /\$[a-zA-Z0-9_:]+/,
+        array_reference_scalar: $ => /\$[a-zA-Z0-9_:]+\([a-zA-Z0-9_:]*\)/,
+        array_reference_scalar_reference: $ => /\$[a-zA-Z0-9_:]+\(\$[a-zA-Z0-9_:]*\)/,
+        identifier: $ => /[^\s\;\n\$\"\{][^\s\;\n]*/,
     }
 });
