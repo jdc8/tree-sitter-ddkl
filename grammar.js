@@ -23,6 +23,7 @@ module.exports = grammar({
 
     name: 'ddkl',
 
+    // The command body can conflict with a new varlist
     conflicts: $ => [[$.command_name, $.foreach_varlist]],
 
     rules: {
